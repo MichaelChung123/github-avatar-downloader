@@ -6,16 +6,6 @@ var arg = process.argv.slice(2);
 console.log('Welcome to the GitHub Avatar Downloader!');
 
 function getRepoContributors(repoOwner, repoName, cb) {
-  request.get(arg[1])
-         .on('error', function (err) {
-            throw err;
-         });
-
-  //tries to check if input for user and repo are valid
-  // if(arg[0] || arg[1]) {
-  //             throw err;
-  // }
-
   var options = {
     url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
     headers: {
@@ -35,12 +25,11 @@ function getRepoContributors(repoOwner, repoName, cb) {
 }
 
 function downloadImageByURL(url, filePath) {
-  request.get(url);
-  //supposed to download images and store it in filePath. not working???
-  //.pipe(fs.createWriteStream(filePath));
+  //supposed to download images and store it in filePath.
+  request.get(url).pipe(fs.createWriteStream(filePath));
 }
 
-getRepoContributors("jquery", "jquery", function(err, result) {
+getRepoContributors(arg[0], arg[1], function(err, result) {
   console.log("Errors:", err);
 
   var i = 0;
@@ -49,7 +38,13 @@ getRepoContributors("jquery", "jquery", function(err, result) {
   for(let arr of result) {
     url = arr.avatar_url;
     console.log(url);
-    downloadImageByURL(url, "avatars/kvirani.jpg");
+    //passin login names as fileName.jpg
+    downloadImageByURL(url, "avatars/" + arr.login + ".jpg");
     i++;
   }
+
 });
+
+
+
+
