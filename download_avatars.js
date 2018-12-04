@@ -1,21 +1,26 @@
 var request = require('request');
 var secret = require('./secret');
 var fs = require('fs');
+var arg = process.argv.slice(2);
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
 function getRepoContributors(repoOwner, repoName, cb) {
-  request.get('https://api.github.com/repos/jquery/jquery/contributors')
-
-         .on('error', function (err) {                                   // Note 2
+  request.get(arg[1])
+         .on('error', function (err) {
             throw err;
          });
-         .pipe(fs.createWriteStream(filePath))
+
+  //tries to check if input for user and repo are valid
+  // if(arg[0] || arg[1]) {
+  //             throw err;
+  // }
 
   var options = {
     url: "https://api.github.com/repos/" + repoOwner + "/" + repoName + "/contributors",
     headers: {
       'User-Agent': 'request',
+      //grabs token from seperate file unseen for other users remotely. token kept in local file
       'Authorization': secret.GITHUB_TOKEN
     }
   };
@@ -29,10 +34,10 @@ function getRepoContributors(repoOwner, repoName, cb) {
 
 }
 
-
 function downloadImageByURL(url, filePath) {
   request.get(url);
-  //.pipe(fs.createWriteStream(filePath)); not working???
+  //supposed to download images and store it in filePath. not working???
+  //.pipe(fs.createWriteStream(filePath));
 }
 
 getRepoContributors("jquery", "jquery", function(err, result) {
